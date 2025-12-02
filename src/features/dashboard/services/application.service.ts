@@ -12,7 +12,8 @@ export interface Application {
 // Interfaz para las llaves
 export interface ApiKeyData {
     id: string;
-    key_value?: string; // El backend a veces lo manda enmascarado
+    key_value?: string;
+    prefix?: string;
     is_active: boolean;
     created_at: string;
     last_used_at?: string;

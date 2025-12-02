@@ -1,171 +1,170 @@
 'use client';
 
-import { IoShieldCheckmarkOutline, IoLockClosedOutline, IoPersonOutline, IoDocumentTextOutline } from "react-icons/io5";
+import { IoShieldCheckmarkOutline, IoLockClosedOutline, IoPersonOutline, IoDocumentTextOutline, IoAlertCircleOutline } from "react-icons/io5";
 
 export const TermsContent = () => {
+    // Definimos las secciones principales para mantener el código limpio
     const sections = [
         {
-            icon: <IoPersonOutline />,
-            title: "Responsable del Tratamiento",
-            content: "Universidad Politécnica de Chiapas, con domicilio en Carretera Tuxtla Gutierrez. - Portillo Zaragoza Km 21+500, Las Brisas, 29150 Suchiapa, Chis., es responsable del tratamiento de los datos personales que nos proporcione, los cuales serán protegidos conforme a lo dispuesto por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares."
+            id: "responsable",
+            icon: <IoPersonOutline className="h-6 w-6" />,
+            title: "1. Responsable del Tratamiento",
+            content: (
+                <>
+                    <p className="leading-relaxed text-slate-600 mb-4">
+                        La <strong>Universidad Politécnica de Chiapas</strong>, con domicilio en Carretera Tuxtla Gutiérrez - Portillo Zaragoza Km 21+500, Las Brisas, 29150 Suchiapa, Chiapas, es la entidad responsable del tratamiento de sus datos personales.
+                    </p>
+                    <p className="leading-relaxed text-slate-600">
+                        Sus datos serán protegidos conforme a lo dispuesto por la <em>Ley Federal de Protección de Datos Personales en Posesión de los Particulares</em> y demás normatividad aplicable.
+                    </p>
+                </>
+            )
         },
         {
-            icon: <IoDocumentTextOutline />,
-            title: "Datos Personales Recabados",
-            content: "Para el uso de APRENDIA Emotion AI, podemos recabar los siguientes datos:",
-            list: [
-                "Datos de identificación: nombre, correo electrónico",
-                "Datos biométricos sensibles: imagen facial capturada a través de la cámara del dispositivo para análisis de expresiones faciales",
-                "Datos de navegación y uso de la plataforma: tiempo de sesión, progreso en lecciones, interacciones con el sistema"
-            ]
+            id: "datos",
+            icon: <IoDocumentTextOutline className="h-6 w-6" />,
+            title: "2. Datos Personales Recabados",
+            content: (
+                <>
+                    <p className="leading-relaxed text-slate-600 mb-4">
+                        Para la operación efectiva de APRENDIA Emotion AI, recabamos las siguientes categorías de datos:
+                    </p>
+                    <ul className="space-y-3 ml-4">
+                        <li className="flex items-start text-slate-600">
+                            <span className="mr-3 mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+                            <span>
+                                <strong className="text-slate-900">Datos de Identificación:</strong> Nombre completo, correo electrónico institucional o personal.
+                            </span>
+                        </li>
+                        <li className="flex items-start text-slate-600">
+                            <span className="mr-3 mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+                            <span>
+                                <strong className="text-slate-900">Datos de Uso:</strong> Tiempo de sesión, progreso en lecciones, frecuencia de interacciones.
+                            </span>
+                        </li>
+                        <li className="flex items-start text-slate-600">
+                            <span className="mr-3 mt-1.5 h-1.5 w-1.5 rounded-full bg-violet-500 flex-shrink-0"></span>
+                            <span>
+                                <strong className="text-slate-900">Datos Biométricos (Sensibles):</strong> Patrones faciales capturados en tiempo real para el análisis de emociones (confusión, interés, frustración). <em className="text-slate-500">Estos datos no se almacenan permanentemente.</em>
+                            </span>
+                        </li>
+                    </ul>
+                </>
+            )
         },
         {
-            icon: <IoShieldCheckmarkOutline />,
-            title: "Finalidades del Tratamiento",
-            content: "Sus datos personales serán utilizados para las siguientes finalidades:",
-            list: [
-                "Principales (necesarias para el servicio):",
-                "  • Detectar y analizar expresiones faciales (confusión, interés, frustración) en tiempo real",
-                "  • Proporcionar retroalimentación visual personalizada durante el aprendizaje",
-                "  • Generar métricas de progreso y estado emocional durante las sesiones de aprendizaje",
-                "  • Mejorar la experiencia educativa adaptando contenidos según las emociones detectadas",
-                "",
-                "Secundarias (requieren consentimiento expreso):",
-                "  • Análisis estadístico y estudios de investigación educativa",
-                "  • Mejora y desarrollo de algoritmos de reconocimiento facial",
-                "  • Envío de información sobre actualizaciones y nuevas funcionalidades"
-            ]
+            id: "finalidades",
+            icon: <IoShieldCheckmarkOutline className="h-6 w-6" />,
+            title: "3. Finalidades del Tratamiento",
+            content: (
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3 border-b border-slate-200 pb-2">
+                            Finalidades Primarias (Necesarias)
+                        </h4>
+                        <ul className="space-y-2 text-slate-600 text-sm">
+                            <li>• Detección de emociones en tiempo real.</li>
+                            <li>• Generación de retroalimentación visual adaptativa.</li>
+                            <li>• Creación de métricas de progreso pedagógico.</li>
+                            <li>• Autenticación y gestión de cuenta.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3 border-b border-slate-200 pb-2">
+                            Finalidades Secundarias (Opcionales)
+                        </h4>
+                        <ul className="space-y-2 text-slate-600 text-sm">
+                            <li>• Estudios estadísticos de investigación educativa.</li>
+                            <li>• Mejora de algoritmos de reconocimiento.</li>
+                            <li>• Envío de novedades sobre la plataforma.</li>
+                        </ul>
+                    </div>
+                </div>
+            )
         },
         {
-            icon: <IoLockClosedOutline />,
-            title: "Protección de Datos Sensibles",
-            content: "Los datos biométricos (imágenes faciales) son considerados datos personales sensibles. El tratamiento de estos datos requiere su consentimiento expreso. Estos datos se procesan únicamente en tiempo real para el análisis emocional y NO se almacenan de forma permanente en nuestros servidores. Solo se conservan métricas anónimas y agregadas."
+            id: "proteccion",
+            icon: <IoLockClosedOutline className="h-6 w-6" />,
+            title: "4. Protección de Datos Sensibles",
+            content: (
+                <div className="bg-indigo-50 border-l-4 border-indigo-500 p-5 rounded-r-lg">
+                    <p className="text-indigo-900 text-sm leading-relaxed">
+                        <strong>IMPORTANTE:</strong> Los datos biométricos son procesados localmente o en memoria volátil. No almacenamos fotografías ni videos de los usuarios en nuestros servidores. Solo conservamos los metadatos resultantes del análisis (ej: "Nivel de atención: Alto") de forma disociada.
+                    </p>
+                </div>
+            )
         }
     ];
 
-    const rights = [
-        "Acceder a sus datos personales y conocer los detalles del tratamiento",
-        "Rectificar sus datos en caso de ser inexactos o incompletos",
-        "Cancelar el uso de sus datos personales",
-        "Oponerse al tratamiento de sus datos personales para fines específicos"
-    ];
-
     return (
-        <section id="privacidad" className="bg-gray-50 py-12 md:py-24">
-            <div className="container mx-auto max-w-7xl px-4 md:px-6">
-                {/* Header */}
-                <div className="mb-8 md:mb-16 text-center">
-                    <h2 className="mb-4 text-2xl font-bold text-gray-900 md:text-4xl">
-                        Aviso de Privacidad
-                    </h2>
-                    <p className="mx-auto max-w-3xl text-base md:text-lg text-gray-600">
-                        Conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares,
-                        la Universidad Politécnica de Chiapas pone a su disposición el presente Aviso de Privacidad.
-                    </p>
-                    <p className="mt-4 text-sm text-gray-500">
+        <section className="bg-white py-20">
+            <div className="container mx-auto max-w-4xl px-6">
+
+                {/* Header del Documento */}
+                <div className="mb-16 text-center">
+                    <div className="inline-flex items-center justify-center p-2 bg-indigo-50 rounded-full mb-4">
+                        <IoAlertCircleOutline className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">
+                        Aviso de Privacidad Integral
+                    </h1>
+                    <p className="text-slate-500 text-lg">
                         Última actualización: Enero 2025
                     </p>
                 </div>
 
-                {/* Main Sections */}
-                <div className="space-y-4 md:space-y-8">
-                    {sections.map((section, index) => (
-                        <div key={index} className="rounded-lg border border-gray-200 bg-white p-4 md:p-8 shadow-sm transition-shadow duration-300 hover:shadow-lg">
-                            <div className="mb-3 md:mb-4 flex items-center gap-2 md:gap-3">
-                                <div className="text-2xl md:text-3xl text-primary flex-shrink-0">{section.icon}</div>
-                                <h3 className="text-lg md:text-2xl font-semibold text-gray-900">{section.title}</h3>
+                {/* Contenido Legal */}
+                <div className="space-y-12">
+                    {sections.map((section) => (
+                        <div key={section.id} className="scroll-mt-24" id={section.id}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="text-indigo-600 p-1.5 bg-indigo-50 rounded-lg">
+                                    {section.icon}
+                                </div>
+                                <h2 className="text-xl md:text-2xl font-bold text-slate-900">
+                                    {section.title}
+                                </h2>
                             </div>
-                            <p className="mb-3 md:mb-4 text-sm md:text-base text-gray-700 leading-relaxed">{section.content}</p>
-                            {section.list && (
-                                <ul className="ml-2 md:ml-4 space-y-1 md:space-y-2 text-sm md:text-base text-gray-700">
-                                    {section.list.map((item, idx) => (
-                                        <li key={idx} className={item.startsWith('  •') ? "ml-4 md:ml-6" : item.startsWith('Principales') || item.startsWith('Secundarias') ? "mt-2 md:mt-3 font-semibold text-gray-900" : ""}>
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+
+                            <div className="text-base text-slate-600 pl-0 md:pl-11">
+                                {section.content}
+                            </div>
+
+                            {/* Separador sutil entre secciones */}
+                            <div className="h-px bg-slate-100 mt-12 w-full" />
                         </div>
                     ))}
-                </div>
 
-                {/* ARCO Rights */}
-                <div className="mt-8 md:mt-12 rounded-lg border-2 border-primary/20 bg-primary/5 p-4 md:p-8">
-                    <h3 className="mb-4 md:mb-6 text-xl md:text-2xl font-semibold text-gray-900">
-                        Derechos ARCO
-                    </h3>
-                    <p className="mb-4 text-sm md:text-base text-gray-700">
-                        Usted tiene derecho a conocer qué datos personales tenemos de usted, para qué los utilizamos y las condiciones del uso que les damos (Acceso). Asimismo, es su derecho solicitar la corrección de su información personal en caso de que esté desactualizada, sea inexacta o incompleta (Rectificación); que la eliminemos de nuestros registros o bases de datos cuando considere que la misma no está siendo utilizada adecuadamente (Cancelación); así como oponerse al uso de sus datos personales para fines específicos (Oposición).
-                    </p>
-                    <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
-                        {rights.map((right, index) => (
-                            <div key={index} className="flex items-start gap-2 md:gap-3 rounded-lg bg-white p-3 md:p-4">
-                                <div className="mt-1 text-lg md:text-xl text-secondary flex-shrink-0">✓</div>
-                                <p className="text-sm md:text-base text-gray-700">{right}</p>
+                    {/* Sección Derechos ARCO (Diseño especial) */}
+                    <div className="pt-4">
+                        <h2 className="text-xl md:text-2xl font-bold text-slate-900 mb-6">
+                            5. Derechos ARCO
+                        </h2>
+                        <p className="text-slate-600 mb-6">
+                            Usted tiene derecho a conocer, rectificar, cancelar u oponerse al tratamiento de sus datos (Derechos ARCO). Para ejercerlos, envíe una solicitud a nuestro oficial de privacidad:
+                        </p>
+
+                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div>
+                                <p className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-1">Contacto Oficial</p>
+                                <a href="mailto:rubendarioh98@gmail.com" className="text-lg font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+                                    rubendarioh98@gmail.com
+                                </a>
                             </div>
-                        ))}
-                    </div>
-                    <div className="mt-4 md:mt-6 rounded-lg bg-white p-4 md:p-6">
-                        <p className="mb-2 text-sm md:text-base font-semibold text-gray-900">Para ejercer sus derechos ARCO, puede enviar una solicitud a:</p>
-                        <p className="text-sm md:text-base text-gray-700">
-                            <strong>Correo electrónico:</strong> <a href="mailto:rubendarioh98@gmail.com" className="text-primary hover:underline break-all">rubendarioh98@gmail.com</a>
-                        </p>
-                        <p className="mt-2 text-xs md:text-sm text-gray-600">
-                            Su solicitud deberá contener: nombre completo, domicilio, identificación oficial, descripción clara de los datos sobre los que busca ejercer sus derechos, y cualquier documento que facilite la localización de sus datos.
-                        </p>
+                            <div className="text-xs text-slate-500 max-w-xs text-center md:text-right">
+                                Responderemos a su solicitud en un plazo máximo de 20 días hábiles conforme a la ley.
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Additional Information */}
-                <div className="mt-8 md:mt-12 space-y-4 md:space-y-6">
-                    <div className="rounded-lg bg-white p-4 md:p-6 shadow-sm">
-                        <h4 className="mb-2 md:mb-3 text-lg md:text-xl font-semibold text-gray-900">Transferencia de Datos</h4>
-                        <p className="text-sm md:text-base text-gray-700">
-                            Sus datos personales NO serán transferidos a terceros, salvo en los casos previstos por la Ley. En caso de requerir transferir sus datos para finalidades distintas, se solicitará su consentimiento expreso.
-                        </p>
-                    </div>
-
-                    <div className="rounded-lg bg-white p-4 md:p-6 shadow-sm">
-                        <h4 className="mb-2 md:mb-3 text-lg md:text-xl font-semibold text-gray-900">Seguridad de los Datos</h4>
-                        <p className="text-sm md:text-base text-gray-700">
-                            Implementamos medidas de seguridad técnicas, administrativas y físicas para proteger sus datos personales contra daño, pérdida, alteración, destrucción o uso no autorizado. El procesamiento de imágenes faciales se realiza mediante tecnologías de encriptación y los datos biométricos se procesan localmente en el dispositivo siempre que sea posible.
-                        </p>
-                    </div>
-
-                    <div className="rounded-lg bg-white p-4 md:p-6 shadow-sm">
-                        <h4 className="mb-2 md:mb-3 text-lg md:text-xl font-semibold text-gray-900">Cookies y Tecnologías de Rastreo</h4>
-                        <p className="text-sm md:text-base text-gray-700">
-                            APRENDIA Emotion AI utiliza cookies y tecnologías similares para mejorar la experiencia del usuario, recordar preferencias y analizar el uso de la plataforma. Puede configurar su navegador para rechazar cookies, aunque esto podría afectar la funcionalidad del servicio.
-                        </p>
-                    </div>
-
-                    <div className="rounded-lg bg-white p-4 md:p-6 shadow-sm">
-                        <h4 className="mb-2 md:mb-3 text-lg md:text-xl font-semibold text-gray-900">Cambios al Aviso de Privacidad</h4>
-                        <p className="text-sm md:text-base text-gray-700">
-                            Nos reservamos el derecho de modificar el presente Aviso de Privacidad en cualquier momento. Cualquier cambio será comunicado a través de nuestra plataforma web y/o correo electrónico registrado.
-                        </p>
-                    </div>
-
-                    <div className="rounded-lg bg-white p-4 md:p-6 shadow-sm">
-                        <h4 className="mb-2 md:mb-3 text-lg md:text-xl font-semibold text-gray-900">Consentimiento</h4>
-                        <p className="text-sm md:text-base text-gray-700">
-                            Al utilizar APRENDIA Emotion AI y proporcionar sus datos personales, usted consiente tácitamente el tratamiento de los mismos conforme a los términos y condiciones del presente Aviso de Privacidad. Para el tratamiento de datos sensibles (imágenes faciales), se solicitará su consentimiento expreso antes de activar la funcionalidad de análisis emocional.
-                        </p>
-                    </div>
-                </div>
-
-                {/* Footer Note */}
-                <div className="mt-8 md:mt-12 border-t border-gray-300 pt-6 md:pt-8 text-center">
-                    <p className="text-xs md:text-sm text-gray-600">
-                        Este Aviso de Privacidad cumple con los requisitos establecidos por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares y su Reglamento.
-                    </p>
-                    <p className="mt-2 text-xs md:text-sm text-gray-500">
-                        Para más información, puede consultar el portal del Instituto Nacional de Transparencia, Acceso a la Información y Protección de Datos Personales (INAI) en{" "}
-                        <a href="https://home.inai.org.mx" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
-                            www.inai.org.mx
-                        </a>
+                {/* Footer Legal */}
+                <div className="mt-20 pt-8 border-t border-slate-200 text-center">
+                    <p className="text-xs text-slate-400 leading-relaxed max-w-2xl mx-auto">
+                        Este documento se rige por las leyes de los Estados Unidos Mexicanos. Al utilizar nuestra plataforma, usted acepta los términos descritos. Para más información sobre sus derechos, visite el sitio oficial del <a href="https://home.inai.org.mx" target="_blank" rel="noreferrer" className="underline hover:text-indigo-600">INAI</a>.
                     </p>
                 </div>
+
             </div>
         </section>
     );
