@@ -9,9 +9,11 @@ interface NameEmailStepProps {
     onSubmit: (name: string, email: string) => void;
     isLoading: boolean;
     initialValues: { name: string; email: string };
+    isActive: boolean;
+    isCompleted: boolean;
 }
 
-export const NameEmailStep = ({ onSubmit, isLoading, initialValues }: NameEmailStepProps) => {
+export const NameEmailStep = ({ onSubmit, isLoading, initialValues, isActive, isCompleted }: NameEmailStepProps) => {
     const { register, handleSubmit, formState: { errors }, setValue } = useForm({
         defaultValues: initialValues
     });
@@ -26,6 +28,8 @@ export const NameEmailStep = ({ onSubmit, isLoading, initialValues }: NameEmailS
         <StepLayout
             title="Crea tu cuenta"
             subtitle="Comienza gratis por 30 días. No se requiere tarjeta."
+            isActive={isActive}
+            isCompleted={isCompleted}
         >
             <form onSubmit={handleSubmit((data) => onSubmit(data.name, data.email))} className="space-y-5">
                 <div className="space-y-4">
