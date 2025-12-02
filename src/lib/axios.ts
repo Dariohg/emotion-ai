@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // URL base: toma la variable de entorno o usa localhost por defecto
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api-gateway-production-f835.up.railway.app';
 
 export const api = axios.create({
     baseURL: API_URL,
