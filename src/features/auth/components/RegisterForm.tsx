@@ -91,6 +91,8 @@ export const RegisterForm = () => {
                             onSubmit={handleSendCode}
                             isLoading={isLoading}
                             initialValues={{ name: formData.name, email: formData.email }}
+                            isActive={!isStep1Completed}
+                            isCompleted={isStep1Completed}
                         />
                     </div>
                 </div>
