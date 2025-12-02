@@ -1,95 +1,82 @@
-'use client';
-
-import { UseFormReturn } from "react-hook-form";
-import { Mail, User, Loader2, ArrowRight } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form";
 import { StepLayout } from "./StepLayout";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 interface NameEmailStepProps {
-    form: UseFormReturn<any>;
-    onSubmit: (values: any) => Promise<void>;
+    onSubmit: (name: string, email: string) => void;
     isLoading: boolean;
-    isActive: boolean;
-    isCompleted: boolean;
-    onEdit: () => void;
-    error?: string;
+    initialValues: { name: string; email: string };
 }
 
-export const NameEmailStep = ({ form, onSubmit, isLoading, isActive, isCompleted, onEdit, error }: NameEmailStepProps) => {
+export const NameEmailStep = ({ onSubmit, isLoading, initialValues }: NameEmailStepProps) => {
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+        defaultValues: initialValues
+    });
+
+    // Actualizar el formulario si los valores iniciales cambian (ej. carga desde URL)
+    useEffect(() => {
+        if (initialValues.name) setValue('name', initialValues.name);
+        if (initialValues.email) setValue('email', initialValues.email);
+    }, [initialValues, setValue]);
+
     return (
         <StepLayout
-            title="1. Datos de la Empresa"
-            description="Comencemos con los datos básicos."
-            isActive={isActive}
-            isCompleted={isCompleted}
-            onEdit={onEdit}
+            title="Crea tu cuenta"
+            subtitle="Comienza gratis por 30 días. No se requiere tarjeta."
         >
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Campo Nombre */}
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="relative group">
-                                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                            <User className={`h-5 w-5 transition-colors ${isActive ? 'text-gray-900' : 'text-gray-400'}`} />
-                                        </div>
-                                        <Input
-                                            placeholder="Nombre de tu Empresa"
-                                            className={`pl-12 h-14 text-lg transition-all rounded-xl ${isActive ? 'bg-gray-50' : 'bg-transparent border-transparent px-0 pl-12 text-gray-600'}`}
-                                            disabled={!isActive}
-                                            {...field}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormMessage className="pl-2" />
-                            </FormItem>
-                        )}
-                    />
+            <form onSubmit={handleSubmit((data) => onSubmit(data.name, data.email))} className="space-y-5">
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
+                            Nombre de la Organización / Persona
+                        </label>
+                        <Input
+                            id="name"
+                            placeholder="Ej. Universidad Politécnica"
+                            {...register("name", { required: "El nombre es obligatorio" })}
+                            className="h-11 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50"
+                        />
+                        {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+                    </div>
 
-                    {/* Campo Email */}
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="relative group">
-                                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                            <Mail className={`h-5 w-5 transition-colors ${isActive ? 'text-gray-900' : 'text-gray-400'}`} />
-                                        </div>
-                                        <Input
-                                            placeholder="correo@empresa.com"
-                                            className={`pl-12 h-14 text-lg transition-all rounded-xl ${isActive ? 'bg-gray-50' : 'bg-transparent border-transparent px-0 pl-12 text-gray-600'}`}
-                                            disabled={!isActive}
-                                            {...field}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormMessage className="pl-2" />
-                            </FormItem>
-                        )}
-                    />
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
+                            Correo Electrónico
+                        </label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="nombre@institucion.edu"
+                            {...register("email", {
+                                required: "El email es obligatorio",
+                                pattern: {
+                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    message: "Email inválido"
+                                }
+                            })}
+                            className="h-11 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50"
+                        />
+                        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                    </div>
+                </div>
 
-                    {error && <p className="text-sm text-red-500 font-medium pl-2">{error}</p>}
-
-                    {isActive && (
-                        <Button
-                            type="submit"
-                            className="w-full h-14 text-lg bg-black hover:bg-gray-800 text-white rounded-xl mt-2"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Solicitar Código"}
-                            {!isLoading && <ArrowRight className="ml-2 h-5 w-5" />}
-                        </Button>
+                <Button
+                    type="submit"
+                    className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-base shadow-lg shadow-indigo-500/20 transition-all mt-6"
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Procesando
+                        </>
+                    ) : (
+                        "Continuar"
                     )}
-                </form>
-            </Form>
+                </Button>
+            </form>
         </StepLayout>
     );
 };

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useState } from "react";
@@ -7,7 +6,7 @@ import { Footer } from "@/src/components/layout/Footer";
 import { CompanySettings } from "@/src/features/dashboard/components/CompanySettings";
 import { ApplicationsManager } from "@/src/features/dashboard/components/ApplicationsManager";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, LayoutGrid, Settings } from "lucide-react";
 
 interface CompanyData {
     id: string;
@@ -21,7 +20,6 @@ export default function DashboardPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Verificar sesión
         const token = localStorage.getItem('auth_token');
         const companyDataStr = localStorage.getItem('company_data');
 
@@ -29,9 +27,7 @@ export default function DashboardPage() {
             router.push('/login');
             return;
         }
-
         try {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCompany(JSON.parse(companyDataStr));
         } catch (e) {
             router.push('/login');
@@ -40,53 +36,64 @@ export default function DashboardPage() {
 
     if (!company) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center space-y-4">
+                    <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mx-auto" />
+                    <p className="text-slate-500 animate-pulse">Cargando tu espacio...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-slate-50 flex flex-col">
             <Navbar />
 
-            <main className="flex-1 container mx-auto max-w-7xl px-4 py-8">
-                {/* Header del Dashboard */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Hola, {company.name}</h1>
-                    <p className="text-gray-600">Gestiona tus aplicaciones y credenciales de API.</p>
+            {/* pt-24 para compensar el navbar fijo */}
+            <main className="flex-1 container mx-auto max-w-7xl px-6 pt-32 pb-20">
+
+                {/* Header con Bienvenida */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+                            Hola, {company.name}
+                        </h1>
+                        <p className="text-slate-500 mt-1">
+                            Gestiona tus integraciones y credenciales desde un solo lugar.
+                        </p>
+                    </div>
+
+                    {/* Switcher de Vistas (Tabs Modernas) */}
+                    <div className="flex p-1 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <button
+                            onClick={() => setActiveTab('apps')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                activeTab === 'apps'
+                                    ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                            }`}
+                        >
+                            <LayoutGrid className="h-4 w-4" /> Aplicaciones
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('settings')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                activeTab === 'settings'
+                                    ? 'bg-indigo-50 text-indigo-700 shadow-sm'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                            }`}
+                        >
+                            <Settings className="h-4 w-4" /> Configuración
+                        </button>
+                    </div>
                 </div>
 
-                {/* Tabs de Navegación */}
-                <div className="flex border-b border-gray-200 mb-8">
-                    <button
-                        onClick={() => setActiveTab('apps')}
-                        className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
-                            activeTab === 'apps'
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                        Mis Aplicaciones
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
-                            activeTab === 'settings'
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                        }`}
-                    >
-                        Configuración de Empresa
-                    </button>
-                </div>
-
-                {/* Contenido */}
+                {/* Área de Contenido */}
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {activeTab === 'apps' ? (
                         <ApplicationsManager companyId={company.id} />
                     ) : (
-                        <div className="max-w-2xl">
+                        <div className="max-w-2xl mx-auto">
                             <CompanySettings companyId={company.id} initialName={company.name} />
                         </div>
                     )}

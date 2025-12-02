@@ -1,73 +1,70 @@
-// src/features/auth/components/steps/VerificationCodeStep.tsx
-'use client';
-
-import { UseFormReturn } from "react-hook-form";
-import { Loader2, Check } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form";
 import { StepLayout } from "./StepLayout";
+import { Loader2 } from "lucide-react";
 
+// CORRECCIÓN: Agregamos 'email' a la interfaz
 interface VerificationCodeStepProps {
-    form: UseFormReturn<any>;
-    onSubmit: (values: any) => Promise<void>;
+    email: string; // <--- FALTABA ESTO
+    onVerify: (code: string) => void;
+    onResend: () => void;
     isLoading: boolean;
-    isActive: boolean;
-    isCompleted: boolean;
-    error?: string;
 }
 
-export const VerificationCodeStep = ({ form, onSubmit, isLoading, isActive, isCompleted, error }: VerificationCodeStepProps) => {
+export const VerificationCodeStep = ({ email, onVerify, onResend, isLoading }: VerificationCodeStepProps) => {
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: { code: '' }
+    });
+
     return (
         <StepLayout
-            title="2. Confirmar Registro"
-            description="Ingresa el código que enviamos a tu correo para crear la cuenta."
-            isActive={isActive}
-            isCompleted={isCompleted}
+            title="Verifica tu correo"
+            subtitle={`Ingresa el código enviado a ${email}`} // Ahora podemos usar 'email' aquí
         >
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-2">
-                    <FormField
-                        control={form.control}
-                        name="code"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="relative">
-                                        <Input
-                                            id="register-code-input"
-                                            placeholder="0 0 0 0 0 0"
-                                            className="text-center text-4xl tracking-[0.4em] font-bold h-20 w-full bg-transparent border-b-2 border-gray-200 border-t-0 border-x-0 rounded-none focus:ring-0 focus:border-black px-0 transition-all placeholder:text-gray-200 text-gray-900"
-                                            maxLength={6}
-                                            autoComplete="one-time-code"
-                                            disabled={!isActive}
-                                            {...field}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormMessage className="text-center text-red-500" />
-                            </FormItem>
-                        )}
+            <form onSubmit={handleSubmit((data) => onVerify(data.code))} className="space-y-6">
+                <div>
+                    <label htmlFor="code" className="block text-sm font-medium text-slate-700 mb-1.5">
+                        Código de Verificación
+                    </label>
+                    <Input
+                        id="code"
+                        placeholder="123456"
+                        maxLength={6}
+                        {...register("code", {
+                            required: "El código es obligatorio",
+                            minLength: { value: 6, message: "El código debe tener 6 dígitos" }
+                        })}
+                        className="h-12 text-center text-2xl tracking-widest border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 font-mono bg-slate-50"
                     />
+                    {errors.code && <p className="mt-1 text-xs text-red-500">{errors.code.message}</p>}
+                </div>
 
-                    {error && (
-                        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-medium">
-                            {error}
-                        </div>
-                    )}
+                <div className="flex flex-col gap-3">
+                    <Button
+                        type="submit"
+                        className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-base shadow-lg shadow-indigo-500/20 transition-all"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verificando
+                            </>
+                        ) : (
+                            "Verificar Cuenta"
+                        )}
+                    </Button>
 
-                    {isActive && (
-                        <Button
-                            type="submit"
-                            className="w-full h-14 text-lg bg-black hover:bg-gray-800 text-white rounded-xl"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Confirmar Cuenta"}
-                            {!isLoading && <Check className="ml-2 h-5 w-5" />}
-                        </Button>
-                    )}
-                </form>
-            </Form>
+                    <button
+                        type="button"
+                        onClick={onResend}
+                        className="text-sm text-slate-500 hover:text-indigo-600 transition-colors font-medium"
+                        disabled={isLoading}
+                    >
+                        ¿No recibiste el código? Reenviar
+                    </button>
+                </div>
+            </form>
         </StepLayout>
     );
 };

@@ -2,39 +2,65 @@ import Image from 'next/image';
 
 export const TechOverview = () => {
     return (
-        <section id="tecnologia" className="bg-white py-24">
+        <section id="tecnologia" className="py-24 bg-slate-50 overflow-hidden">
             <div className="container mx-auto max-w-7xl px-6">
-                <div className="grid grid-cols-1 items-center gap-16 md:grid-cols-2">
-                    <div>
-                        <Image
-                            src="/face_mesh_overview.png"
-                            alt="Malla facial de 468 puntos"
-                            width={600}
-                            height={600}
-                            className="w-full rounded-lg shadow-xl"
-                        />
-                    </div>
-                    <div className="text-left">
-                        <span className="font-semibold uppercase tracking-wider text-secondary">
-                            Arquitectura y Tecnología
-                        </span>
-                        <h2 className="mt-4 text-3xl font-bold text-gray-900 md:text-4xl">
-                            Una Integración No Invasiva
-                        </h2>
-                        <p className="mt-6 text-lg text-gray-600">
-                            Diseñamos el agente como una librería simple. Esto soluciona un problema clave: en lugar de forzar al usuario a usar dos apps, <strong className="font-semibold text-gray-800">todo se mantiene en la aplicación principal</strong> (APRENDIA).
-                        </p>
-                        <p className="mt-4 text-lg text-gray-600">
-                            Este enfoque evita que nuestra app se ejecute en segundo plano y permite una integración limpia como un simple "widget" más.
-                        </p>
+                <div className="flex flex-col lg:flex-row items-center gap-16">
 
-                        <h3 className="mt-8 text-2xl font-bold text-gray-900">
-                            ¿Cómo funciona?
-                        </h3>
-                        <p className="mt-4 text-lg text-gray-600">
-                            Utilizamos tecnología de aprendizaje automático (ML Kit) para capturar una <strong className="font-semibold text-gray-800">malla facial de 468 puntos</strong> en tiempo real. Es al analizar los movimientos sutiles de estos puntos que nuestro sistema interpreta las expresiones no verbales con alta precisión.
-                        </p>
+                    {/* Imagen / Visualización */}
+                    <div className="w-full lg:w-1/2 relative order-2 lg:order-1">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-2xl blur-2xl opacity-20 -rotate-3"></div>
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
+                            <Image
+                                src="/face_mesh_overview.png"
+                                alt="Malla facial de 468 puntos"
+                                width={800}
+                                height={600}
+                                className="w-full h-auto object-cover transform transition-transform hover:scale-105 duration-700"
+                            />
+
+                            {/* Etiqueta Flotante */}
+                            <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-slate-100 shadow-lg">
+                                <div className="flex justify-between items-center">
+                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Puntos de rastreo</div>
+                                    <div className="text-indigo-600 font-bold font-mono">468 Pts</div>
+                                </div>
+                                <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+                                    <div className="bg-indigo-500 h-full w-[95%]"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Contenido Texto */}
+                    <div className="w-full lg:w-1/2 order-1 lg:order-2">
+                        <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-indigo-600 uppercase bg-indigo-50 rounded-full">
+                            Arquitectura
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+                            Integración <span className="text-indigo-600">No Invasiva</span>
+                        </h2>
+
+                        <div className="space-y-6 text-lg text-slate-600">
+                            <p>
+                                Diseñamos el agente como una librería ligera. En lugar de forzar al usuario a cambiar de contexto, <strong className="text-slate-900">todo ocurre dentro de la aplicación principal</strong>.
+                            </p>
+                            <p>
+                                Utilizamos <strong>ML Kit</strong> para proyectar una malla facial de alta densidad en tiempo real. Analizamos micro-expresiones sin guardar video, garantizando velocidad y privacidad.
+                            </p>
+                        </div>
+
+                        <div className="mt-10 grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <div className="text-2xl font-bold text-slate-900 mb-1">~15ms</div>
+                                <div className="text-sm text-slate-500">Latencia de análisis</div>
+                            </div>
+                            <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <div className="text-2xl font-bold text-slate-900 mb-1">Local</div>
+                                <div className="text-sm text-slate-500">Procesamiento Edge</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>

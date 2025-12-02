@@ -1,157 +1,120 @@
-// src/features/auth/components/RegisterForm.tsx
 'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { authService } from "../services/auth.service";
-
-// Importamos los pasos
-import { NameEmailStep } from "./steps/NameEmailStep";
-import { VerificationCodeStep } from "./steps/VerificationCodeStep";
-import { OTPStep } from "./steps/OTPStep"; // Reutilizamos el de Login
-
-// Esquemas de validación
-const nameEmailSchema = z.object({
-    name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-    email: z.string().email("Ingresa un correo electrónico válido"),
-});
-
-const codeSchema = z.object({
-    code: z.string().length(6, "El código debe tener 6 dígitos exactos"),
-});
-
-const otpSchema = z.object({
-    otp: z.string().length(6, "El código debe tener 6 dígitos exactos"),
-});
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { NameEmailStep } from './steps/NameEmailStep';
+import { VerificationCodeStep } from './steps/VerificationCodeStep';
+import { authService } from '../services/auth.service';
+import { useToast } from "@/src/hooks/use-toast";
+import { CheckCircle2 } from 'lucide-react';
 
 export const RegisterForm = () => {
-    // 1: Datos, 2: Código Registro, 3: Código Login (Automático)
-    const [currentStep, setCurrentStep] = useState(1);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const { toast } = useToast();
+
+    // Estado para controlar qué paso está activo
+    const [isStep1Completed, setIsStep1Completed] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Datos temporales
-    const [savedData, setSavedData] = useState({ name: "", email: "" });
-    const [error, setError] = useState("");
-
-    const router = useRouter();
-
-    // Formularios independientes para cada paso
-    const dataForm = useForm<z.infer<typeof nameEmailSchema>>({
-        resolver: zodResolver(nameEmailSchema),
-        defaultValues: { name: "", email: "" },
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        code: ''
     });
 
-    const regCodeForm = useForm<z.infer<typeof codeSchema>>({
-        resolver: zodResolver(codeSchema),
-        defaultValues: { code: "" },
-    });
+    // Cargar datos de URL
+    useEffect(() => {
+        if (!searchParams) return;
+        const nameParam = searchParams.get('name');
+        const emailParam = searchParams.get('email');
 
-    const otpForm = useForm<z.infer<typeof otpSchema>>({
-        resolver: zodResolver(otpSchema),
-        defaultValues: { otp: "" },
-    });
+        if (nameParam || emailParam) {
+            setFormData(prev => ({
+                ...prev,
+                name: nameParam || prev.name,
+                email: emailParam || prev.email
+            }));
+        }
+    }, [searchParams]);
 
-    // --- Paso 1: Solicitar Registro (Postman Step 2) ---
-    const handleDataSubmit = async (values: z.infer<typeof nameEmailSchema>) => {
+    // Manejadores
+    const handleSendCode = async (name: string, email: string) => {
         setIsLoading(true);
-        setError("");
+        setFormData(prev => ({ ...prev, name, email }));
         try {
-            await authService.requestVerification(values.name, values.email);
-            setSavedData(values);
-            setCurrentStep(2);
-            setTimeout(() => document.getElementById('register-code-input')?.focus(), 100);
-        } catch (err: any) {
-            if (err.response?.status === 400) {
-                setError("Este correo ya está registrado o es inválido.");
-            } else {
-                setError("Ocurrió un error al solicitar el registro.");
-            }
+            await authService.requestEmailVerification(name, email);
+            setIsStep1Completed(true); // Marcamos paso 1 como completado (se opacará)
+            toast({ title: "Código enviado", description: `Revisa ${email}` });
+        } catch (error: any) {
+            toast({ variant: "destructive", title: "Error", description: "No se pudo enviar el código." });
         } finally {
             setIsLoading(false);
         }
     };
 
-    // --- Paso 2: Confirmar Registro y Auto-Login (Postman Step 3 & 4) ---
-    const handleRegCodeSubmit = async (values: z.infer<typeof codeSchema>) => {
+    const handleVerifyCode = async (code: string) => {
         setIsLoading(true);
-        setError("");
         try {
-            // 1. Confirmar Registro (Step 3)
-            await authService.confirmRegistration(savedData.name, savedData.email, values.code);
-
-            // 2. Automáticamente solicitar OTP de Login (Step 4)
-            // Ya que el registro no devuelve token, iniciamos el flujo de login inmediatamente
-            await authService.requestLogin(savedData.email);
-
-            setCurrentStep(3);
-            setTimeout(() => document.getElementById('otp-input')?.focus(), 100);
-        } catch (err: any) {
-            setError("Código de registro incorrecto o expirado.");
+            await authService.registerCompany(formData.name, formData.email, code);
+            toast({ title: "¡Cuenta creada!", description: "Redirigiendo..." });
+            router.push('/login');
+        } catch (error: any) {
+            toast({ variant: "destructive", title: "Error", description: "Código incorrecto." });
         } finally {
             setIsLoading(false);
         }
-    };
-
-    // --- Paso 3: Verificar Login Final (Postman Step 5) ---
-    const handleOtpSubmit = async (values: z.infer<typeof otpSchema>) => {
-        setIsLoading(true);
-        setError("");
-        try {
-            await authService.verifyLogin(savedData.email, values.otp);
-            router.push("/dashboard");
-        } catch (err: any) {
-            setError("Código de acceso incorrecto.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Permitir editar datos si se equivocó en el paso 1
-    const handleEditData = () => {
-        setCurrentStep(1);
-        setError("");
-        regCodeForm.reset();
-        otpForm.reset();
     };
 
     return (
-        <div className="w-full max-w-md mx-auto space-y-4">
-            {/* Paso 1: Nombre y Email */}
-            <NameEmailStep
-                form={dataForm}
-                onSubmit={handleDataSubmit}
-                isLoading={isLoading}
-                isActive={currentStep === 1}
-                isCompleted={currentStep > 1}
-                onEdit={handleEditData}
-                error={currentStep === 1 ? error : undefined}
-            />
+        <div className="flex flex-col gap-12 relative">
+            {/* Línea vertical conectora (opcional, para dar idea de flujo) */}
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-slate-100 -z-10 hidden md:block" />
 
-            {/* Paso 2: Código de Verificación de Registro */}
-            {currentStep >= 2 && (
-                <VerificationCodeStep
-                    form={regCodeForm}
-                    onSubmit={handleRegCodeSubmit}
-                    isLoading={isLoading}
-                    isActive={currentStep === 2}
-                    isCompleted={currentStep > 2}
-                    error={currentStep === 2 ? error : undefined}
-                />
-            )}
+            {/* PASO 1: DATOS */}
+            <div className={`transition-all duration-500 ease-in-out ${
+                isStep1Completed ? 'opacity-50 pointer-events-none grayscale-[0.5]' : 'opacity-100'
+            }`}>
+                <div className="flex items-start gap-6">
+                    {/* Indicador de paso */}
+                    <div className={`hidden md:flex h-12 w-12 rounded-full items-center justify-center shrink-0 border-2 transition-colors ${
+                        isStep1Completed
+                            ? 'bg-green-50 border-green-500 text-green-600'
+                            : 'bg-white border-indigo-600 text-indigo-600'
+                    }`}>
+                        {isStep1Completed ? <CheckCircle2 className="h-6 w-6" /> : <span className="text-lg font-bold">1</span>}
+                    </div>
 
-            {/* Paso 3: Código de Acceso (OTP Login) */}
-            {currentStep >= 3 && (
-                <OTPStep
-                    form={otpForm}
-                    onSubmit={handleOtpSubmit}
-                    isLoading={isLoading}
-                    isActive={currentStep === 3}
-                    emailSentTo={savedData.email}
-                    error={currentStep === 3 ? error : undefined}
-                />
+                    {/* Contenido del paso */}
+                    <div className="flex-1">
+                        <NameEmailStep
+                            onSubmit={handleSendCode}
+                            isLoading={isLoading}
+                            initialValues={{ name: formData.name, email: formData.email }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* PASO 2: CÓDIGO (Solo aparece si el 1 está completo) */}
+            {isStep1Completed && (
+                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <div className="flex items-start gap-6">
+                        {/* Indicador de paso */}
+                        <div className="hidden md:flex h-12 w-12 rounded-full bg-indigo-600 text-white items-center justify-center shrink-0 shadow-lg shadow-indigo-500/30">
+                            <span className="text-lg font-bold">2</span>
+                        </div>
+
+                        <div className="flex-1">
+                            <VerificationCodeStep
+                                email={formData.email}
+                                onVerify={handleVerifyCode}
+                                onResend={() => handleSendCode(formData.name, formData.email)}
+                                isLoading={isLoading}
+                            />
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

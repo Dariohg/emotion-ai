@@ -1,78 +1,67 @@
-'use client';
-
 import { UseFormReturn } from "react-hook-form";
-import { Mail, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Loader2 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/src/components/ui/form";
-import { StepLayout } from "./StepLayout";
 
 interface EmailStepProps {
     form: UseFormReturn<any>;
     onSubmit: (values: any) => Promise<void>;
     isLoading: boolean;
-    isActive: boolean;
-    isCompleted: boolean;
-    onEdit: () => void;
     error?: string;
 }
 
-export const EmailStep = ({ form, onSubmit, isLoading, isActive, isCompleted, onEdit, error }: EmailStepProps) => {
+export const EmailStep = ({ form, onSubmit, isLoading, error }: EmailStepProps) => {
     return (
-        <StepLayout
-            title="1. Tu Correo"
-            description="Ingresa tu correo institucional para iniciar."
-            isActive={isActive}
-            isCompleted={isCompleted}
-            onEdit={onEdit}
-        >
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="relative group">
-                                        {/* ICONO: Centrado verticalmente */}
-                                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                                            <Mail className={`h-5 w-5 transition-colors ${isActive ? 'text-gray-900' : 'text-gray-400'}`} />
-                                        </div>
-
-                                        {/* INPUT: pl-12 da espacio suficiente para que el texto no toque el icono */}
-                                        <Input
-                                            placeholder="nombre@upchiapas.edu.mx"
-                                            className={`pl-12 h-14 text-lg transition-all rounded-xl
-                        ${isActive
-                                                ? 'bg-gray-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-black/5 focus:border-black'
-                                                : 'bg-transparent border-transparent px-0 pl-12 font-medium text-gray-600' // Estilo "solo texto" al completar
-                                            }`}
-                                            disabled={!isActive}
-                                            autoComplete="email"
-                                            {...field}
-                                        />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                                Correo Electrónico
+                            </label>
+                            <FormControl>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Mail className="h-5 w-5 text-slate-400" />
                                     </div>
-                                </FormControl>
-                                <FormMessage className="text-sm text-red-500 font-medium pl-2" />
-                            </FormItem>
-                        )}
-                    />
-
-                    {error && <p className="text-sm text-red-500 font-medium pl-2">{error}</p>}
-
-                    {isActive && (
-                        <Button
-                            type="submit"
-                            className="w-full h-14 text-lg bg-black hover:bg-gray-800 text-white rounded-xl mt-2 transition-transform active:scale-[0.99]"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "Continuar"}
-                            {!isLoading && <ArrowRight className="ml-2 h-5 w-5" />}
-                        </Button>
+                                    <Input
+                                        placeholder="nombre@empresa.com"
+                                        className="pl-10 h-12 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 transition-all hover:bg-white"
+                                        autoComplete="email"
+                                        {...field}
+                                    />
+                                </div>
+                            </FormControl>
+                            <FormMessage className="text-xs text-red-500 mt-1" />
+                        </FormItem>
                     )}
-                </form>
-            </Form>
-        </StepLayout>
+                />
+
+                {error && (
+                    <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                        <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+                        {error}
+                    </div>
+                )}
+
+                <Button
+                    type="submit"
+                    className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-base shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98]"
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Buscando cuenta...
+                        </>
+                    ) : (
+                        "Continuar"
+                    )}
+                </Button>
+            </form>
+        </Form>
     );
 };

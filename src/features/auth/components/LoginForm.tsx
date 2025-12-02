@@ -1,104 +1,116 @@
 'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { authService } from "../services/auth.service";
-
-// Importamos los pasos
-import { EmailStep } from "./steps/EmailStep";
-import { OTPStep } from "./steps/OTPStep";
-
-const emailSchema = z.object({
-    email: z.string().email("Ingresa un correo electrónico válido"),
-});
-
-const otpSchema = z.object({
-    otp: z.string().length(6, "El código debe tener 6 dígitos exactos"),
-});
+import { authService } from '../services/auth.service';
+import { EmailStep } from './steps/EmailStep';
+import { VerificationCodeStep } from './steps/VerificationCodeStep';
+import { useToast } from "@/src/hooks/use-toast";
+import { Edit2 } from "lucide-react";
 
 export const LoginForm = () => {
-    const [currentStep, setCurrentStep] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
-    const [savedEmail, setSavedEmail] = useState("");
-    const [error, setError] = useState("");
-
     const router = useRouter();
+    const { toast } = useToast();
 
-    const emailForm = useForm<z.infer<typeof emailSchema>>({
-        resolver: zodResolver(emailSchema),
-        defaultValues: { email: "" },
+    // Estado visual: 'idle' (pidiendo email) o 'otp_sent' (pidiendo código)
+    const [status, setStatus] = useState<'idle' | 'otp_sent'>('idle');
+    const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const form = useForm({
+        defaultValues: { email: '', code: '' }
     });
 
-    const otpForm = useForm<z.infer<typeof otpSchema>>({
-        resolver: zodResolver(otpSchema),
-        defaultValues: { otp: "" },
-    });
-
-    // Handler Paso 1
-    const handleEmailSubmit = async (values: z.infer<typeof emailSchema>) => {
+    const onEmailSubmit = async (data: any) => {
         setIsLoading(true);
-        setError("");
         try {
-            await authService.requestLogin(values.email);
-            setSavedEmail(values.email);
-            setCurrentStep(2);
-            // Foco automático al input del OTP
-            setTimeout(() => document.getElementById('otp-input')?.focus(), 100);
-        } catch (err: unknown) {
-            setError("No pudimos encontrar ese correo.");
+            await authService.requestLogin(data.email);
+            setEmail(data.email);
+            setStatus('otp_sent');
+            toast({ title: "Código enviado", description: "Revisa tu bandeja de entrada." });
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.response?.data?.detail || "No pudimos enviar el código. Verifica que el correo exista."
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Handler Paso 2
-    const handleOtpSubmit = async (values: z.infer<typeof otpSchema>) => {
+    const onCodeSubmit = async (code: string) => {
         setIsLoading(true);
-        setError("");
         try {
-            await authService.verifyLogin(savedEmail, values.otp);
-            router.push("/dashboard");
-        } catch (err: unknown) {
-            setError("Código incorrecto o expirado.");
+            await authService.verifyLogin(email, code);
+            router.push('/dashboard');
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Código inválido o expirado."
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Regresar al paso 1
     const handleEditEmail = () => {
-        setCurrentStep(1);
-        setError("");
-        otpForm.reset();
+        setStatus('idle');
+        form.setValue('code', ''); // Limpiar código si regresa
     };
 
     return (
-        <div className="w-full max-w-md mx-auto space-y-4">
-            {/* Paso 1 */}
-            <EmailStep
-                form={emailForm}
-                onSubmit={handleEmailSubmit}
-                isLoading={isLoading}
-                isActive={currentStep === 1}
-                isCompleted={currentStep > 1}
-                onEdit={handleEditEmail}
-                error={currentStep === 1 ? error : undefined}
-            />
+        <div className="w-full max-w-md mx-auto">
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 overflow-hidden relative">
 
-            {/* Paso 2 (Solo se renderiza si ya pasamos el 1) */}
-            {currentStep >= 2 && (
-                <OTPStep
-                    form={otpForm}
-                    onSubmit={handleOtpSubmit}
-                    isLoading={isLoading}
-                    isActive={currentStep === 2}
-                    emailSentTo={savedEmail}
-                    error={currentStep === 2 ? error : undefined}
-                />
-            )}
+                {/* Barra decorativa superior */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
+
+                <div className="flex flex-col gap-8">
+
+                    {/* PASO 1: EMAIL */}
+                    <div className={`transition-all duration-500 ease-in-out ${
+                        status === 'otp_sent' ? 'opacity-40 pointer-events-none grayscale' : 'opacity-100'
+                    }`}>
+                        <div className="flex justify-between items-center mb-2">
+                            {/* Si ya enviamos el código, mostramos un indicador visual o botón de editar */}
+                            {status === 'otp_sent' && (
+                                <button
+                                    onClick={handleEditEmail}
+                                    className="pointer-events-auto flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors mb-2"
+                                >
+                                    <Edit2 className="h-3 w-3" /> Corregir correo
+                                </button>
+                            )}
+                        </div>
+
+                        <EmailStep
+                            form={form}
+                            onSubmit={onEmailSubmit}
+                            isLoading={isLoading && status === 'idle'}
+                        />
+                    </div>
+
+                    {/* PASO 2: CÓDIGO (Aparece abajo) */}
+                    {status === 'otp_sent' && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+                            {/* Línea conectora visual */}
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-px h-6 bg-slate-200" />
+
+                            <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                                <VerificationCodeStep
+                                    email={email}
+                                    onVerify={onCodeSubmit}
+                                    onResend={() => onEmailSubmit({ email })}
+                                    isLoading={isLoading}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
