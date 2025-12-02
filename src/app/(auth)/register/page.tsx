@@ -1,6 +1,7 @@
 import { Navbar } from '@/src/components/layout/Navbar';
 import { Footer } from '@/src/components/layout/Footer';
 import { RegisterForm } from '@/src/features/auth/components/RegisterForm';
+import { Suspense } from 'react';
 
 export default function RegisterPage() {
     return (
@@ -18,7 +19,9 @@ export default function RegisterPage() {
                         </p>
                     </div>
 
-                    <RegisterForm />
+                    <Suspense fallback={<div>Cargando formulario...</div>}>
+                        <RegisterForm />
+                    </Suspense>
                 </div>
             </main>
 
