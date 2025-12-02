@@ -2,25 +2,29 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { StepLayout } from "./StepLayout";
-import { Loader2 } from "lucide-react";
+import {Loader2} from "lucide-react";
+// import { Loader2 } from "lucide-react";
 
 // CORRECCIÓN: Agregamos 'email' a la interfaz
 interface VerificationCodeStepProps {
-    email: string; // <--- FALTABA ESTO
+    email: string;
     onVerify: (code: string) => void;
     onResend: () => void;
     isLoading: boolean;
+    isActive: boolean;
+    isCompleted: boolean;
 }
 
-export const VerificationCodeStep = ({ email, onVerify, onResend, isLoading }: VerificationCodeStepProps) => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+export const VerificationCodeStep = ({ email, onVerify, onResend, isLoading, isActive, isCompleted }: VerificationCodeStepProps) => {    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: { code: '' }
     });
 
     return (
         <StepLayout
             title="Verifica tu correo"
-            subtitle={`Ingresa el código enviado a ${email}`} // Ahora podemos usar 'email' aquí
+            subtitle={`Ingresa el código enviado a ${email}`}
+            isActive={isActive}
+            isCompleted={isCompleted}
         >
             <form onSubmit={handleSubmit((data) => onVerify(data.code))} className="space-y-6">
                 <div>

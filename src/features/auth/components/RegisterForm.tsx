@@ -113,6 +113,8 @@ export const RegisterForm = () => {
                                 onVerify={handleVerifyCode}
                                 onResend={() => handleSendCode(formData.name, formData.email)}
                                 isLoading={isLoading}
+                                isActive={true}
+                                isCompleted={false}
                             />
                         </div>
                     </div>
