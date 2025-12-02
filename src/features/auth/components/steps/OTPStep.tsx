@@ -20,7 +20,7 @@ export const OTPStep = ({ form, onSubmit, isLoading, isActive, emailSentTo, erro
     return (
         <StepLayout
             title="2. Verificación"
-            description={
+            subtitle={
                 <span>
           Código enviado a <span className="font-semibold text-black bg-gray-100 px-1 rounded">{emailSentTo}</span>
         </span>
