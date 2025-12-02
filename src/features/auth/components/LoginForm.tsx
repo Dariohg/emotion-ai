@@ -105,6 +105,8 @@ export const LoginForm = () => {
                                     onVerify={onCodeSubmit}
                                     onResend={() => onEmailSubmit({ email })}
                                     isLoading={isLoading}
+                                    isActive={true}
+                                    isCompleted={false}
                                 />
                             </div>
                         </div>
