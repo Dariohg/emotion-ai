@@ -40,18 +40,11 @@ export const Hero = () => {
                     {/* Botones CORREGIDOS - Usando colores estándar de Tailwind */}
                     <div className="mt-10 flex flex-col gap-4 sm:flex-row justify-center w-full sm:w-auto">
                         <Link href="/register" className="w-full sm:w-auto">
-                            {/* CAMBIO CLAVE: bg-indigo-600 en lugar de bg-primary-600 */}
                             <Button className="w-full sm:w-auto h-12 px-8 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/20 transition-all hover:scale-105 border-0">
                                 Empezar Ahora <FaArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </Link>
 
-                        <Link href="#demo" className="w-full sm:w-auto">
-                            {/* Este botón ya debería verse bien, aseguramos el texto oscuro */}
-                            <Button variant="outline" className="w-full sm:w-auto h-12 px-8 rounded-full border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium">
-                                <FaPlay className="mr-2 h-3 w-3 text-slate-400" /> Ver Demo
-                            </Button>
-                        </Link>
                     </div>
                 </div>
 
@@ -60,7 +53,7 @@ export const Hero = () => {
                     <div className="group relative rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl shadow-slate-200/50">
                         <div className="aspect-[16/9] overflow-hidden rounded-xl bg-slate-50 relative">
                             <Image
-                                src="/banner.png"
+                                src="/dashboard.png"
                                 alt="Dashboard Emotion AI"
                                 fill
                                 className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.01]"

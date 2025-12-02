@@ -11,23 +11,14 @@ export const TechOverview = () => {
                         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-2xl blur-2xl opacity-20 -rotate-3"></div>
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
                             <Image
-                                src="/face_mesh_overview.png"
+                                src="/face_mesh.png"
                                 alt="Malla facial de 468 puntos"
                                 width={800}
                                 height={600}
                                 className="w-full h-auto object-cover transform transition-transform hover:scale-105 duration-700"
                             />
 
-                            {/* Etiqueta Flotante */}
-                            <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl border border-slate-100 shadow-lg">
-                                <div className="flex justify-between items-center">
-                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Puntos de rastreo</div>
-                                    <div className="text-indigo-600 font-bold font-mono">468 Pts</div>
-                                </div>
-                                <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                                    <div className="bg-indigo-500 h-full w-[95%]"></div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
 

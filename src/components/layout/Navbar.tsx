@@ -5,6 +5,7 @@ import { FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation'; // Importamos useRouter
 import { Button } from '@/src/components/ui/button';
+import {BookOpen} from "lucide-react";
 
 const navLinks = [
     { title: "Beneficios", href: "/#beneficios" },
@@ -70,15 +71,33 @@ export const Navbar = () => {
 
                 {/* Botones de Acción (Desktop) */}
                 <div className="hidden md:flex items-center gap-4">
-                    {isDashboard ? (
-                        // Si estamos en Dashboard -> Mostrar Cerrar Sesión
-                        <Button
-                            variant="ghost"
-                            onClick={handleLogout}
-                            className="text-sm font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50"
-                        >
-                            <FaSignOutAlt className="mr-2 h-4 w-4" /> Cerrar Sesión
-                        </Button>
+                    {isDashboard || pathname.startsWith('/manual') ? ( // <-- Modificación aquí para que se vea también en /manual
+                        <>
+                            {/* Nuevo Botón de Documentación */}
+                            <Link href="/manual">
+                                <Button variant="ghost" className="text-sm font-medium text-slate-600 hover:text-indigo-600">
+                                    <BookOpen className="mr-2 h-4 w-4" />
+                                    Documentación
+                                </Button>
+                            </Link>
+
+                            {/* Botón de Ir al Dashboard (si estamos en manual) */}
+                            {!isDashboard && (
+                                <Link href="/dashboard">
+                                    <Button variant="ghost" className="text-sm font-medium text-slate-600">
+                                        Dashboard
+                                    </Button>
+                                </Link>
+                            )}
+
+                            <Button
+                                variant="ghost"
+                                onClick={handleLogout}
+                                className="text-sm font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50"
+                            >
+                                <FaSignOutAlt className="mr-2 h-4 w-4" /> Cerrar Sesión
+                            </Button>
+                        </>
                     ) : (
                         // Si estamos fuera -> Mostrar Login/Register
                         <>
