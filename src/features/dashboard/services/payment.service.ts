@@ -26,7 +26,7 @@ export const paymentService = {
             throw new Error("No se encontró el email de la empresa");
         }
 
-        const baseUrl = "https://api-gateway-production-f835.up.railway.app"
+        const baseUrl = "https://salvably-unsaponified-blair.ngrok-free.dev"
 
         const payload = {
             application_id: applicationId,
