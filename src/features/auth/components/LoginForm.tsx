@@ -8,6 +8,12 @@ import { EmailStep } from './steps/EmailStep';
 import { VerificationCodeStep } from './steps/VerificationCodeStep';
 import { useToast } from "@/src/hooks/use-toast";
 import { Edit2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "@/src/lib/schemas";
+import { z } from "zod";
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -18,11 +24,12 @@ export const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const form = useForm({
+    const form = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
         defaultValues: { email: '', code: '' }
     });
 
-    const onEmailSubmit = async (data: any) => {
+    const onEmailSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
         try {
             await authService.requestLogin(data.email);
@@ -58,7 +65,7 @@ export const LoginForm = () => {
 
     const handleEditEmail = () => {
         setStatus('idle');
-        form.setValue('code', ''); // Limpiar código si regresa
+        form.setValue('code', '');
     };
 
     return (

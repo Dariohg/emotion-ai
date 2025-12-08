@@ -1,9 +1,15 @@
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "@/src/lib/schemas";
+import { z } from "zod";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { StepLayout } from "./StepLayout";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/ui/form";
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 interface NameEmailStepProps {
     onSubmit: (name: string, email: string) => void;
@@ -14,15 +20,19 @@ interface NameEmailStepProps {
 }
 
 export const NameEmailStep = ({ onSubmit, isLoading, initialValues, isActive, isCompleted }: NameEmailStepProps) => {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+    const form = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
         defaultValues: initialValues
     });
 
-    // Actualizar el formulario si los valores iniciales cambian (ej. carga desde URL)
     useEffect(() => {
-        if (initialValues.name) setValue('name', initialValues.name);
-        if (initialValues.email) setValue('email', initialValues.email);
-    }, [initialValues, setValue]);
+        if (initialValues.name) form.setValue('name', initialValues.name);
+        if (initialValues.email) form.setValue('email', initialValues.email);
+    }, [initialValues, form]);
+
+    const handleSubmit = (data: RegisterFormValues) => {
+        onSubmit(data.name, data.email);
+    };
 
     return (
         <StepLayout
@@ -31,56 +41,56 @@ export const NameEmailStep = ({ onSubmit, isLoading, initialValues, isActive, is
             isActive={isActive}
             isCompleted={isCompleted}
         >
-            <form onSubmit={handleSubmit((data) => onSubmit(data.name, data.email))} className="space-y-5">
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
-                            Nombre de la Organización / Persona
-                        </label>
-                        <Input
-                            id="name"
-                            placeholder="Ej. Universidad Politécnica"
-                            {...register("name", { required: "El nombre es obligatorio" })}
-                            className="h-11 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50"
-                        />
-                        {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
-                    </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
 
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
-                            Correo Electrónico
-                        </label>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="nombre@institucion.edu"
-                            {...register("email", {
-                                required: "El email es obligatorio",
-                                pattern: {
-                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                    message: "Email inválido"
-                                }
-                            })}
-                            className="h-11 border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50"
-                        />
-                        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
-                    </div>
-                </div>
+                    {/* CAMPO NOMBRE */}
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nombre de la Organización / Persona</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Ej. Universidad Politécnica"
+                                        className="h-11 bg-slate-50"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <Button
-                    type="submit"
-                    className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-base shadow-lg shadow-indigo-500/20 transition-all mt-6"
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Procesando
-                        </>
-                    ) : (
-                        "Continuar"
-                    )}
-                </Button>
-            </form>
+                    {/* CAMPO EMAIL */}
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Correo Electrónico</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="nombre@institucion.edu"
+                                        className="h-11 bg-slate-50"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <Button
+                        type="submit"
+                        className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white mt-6"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Continuar"}
+                    </Button>
+                </form>
+            </Form>
         </StepLayout>
     );
 };

@@ -53,7 +53,7 @@ export const paymentService = {
 
         } catch (error: any) {
             console.error("[PaymentService] Error en la petición:", error.response?.data || error.message);
-            throw error; // Re-lanzar para que el componente lo maneje
+            throw error;
         }
     }
 };
